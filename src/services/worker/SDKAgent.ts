@@ -46,6 +46,21 @@ export class SDKAgent {
     // Find Claude executable
     const claudePath = this.findClaudeExecutable();
 
+    // Load settings and configure environment variables
+    const settings = SettingsDefaultsManager.loadFromFile(USER_SETTINGS_PATH);
+
+    // Set custom API configuration if provided
+    if (settings.CLAUDE_MEM_AUTH_TOKEN) {
+      process.env.ANTHROPIC_AUTH_TOKEN = settings.CLAUDE_MEM_AUTH_TOKEN;
+      process.env.ANTHROPIC_API_KEY = settings.CLAUDE_MEM_AUTH_TOKEN; // Fallback for SDK compatibility
+    }
+    if (settings.CLAUDE_MEM_BASE_URL) {
+      process.env.ANTHROPIC_BASE_URL = settings.CLAUDE_MEM_BASE_URL;
+    }
+    if (settings.CLAUDE_MEM_API_TIMEOUT_MS) {
+      process.env.API_TIMEOUT_MS = settings.CLAUDE_MEM_API_TIMEOUT_MS;
+    }
+
     // Get model ID and disallowed tools
     const modelId = this.getModelId();
     // Memory agent is OBSERVER ONLY - no tools allowed
@@ -390,10 +405,28 @@ export class SDKAgent {
 
   /**
    * Get model ID from settings or environment
+   * Maps standard model names to custom model names if configured
    */
   private getModelId(): string {
     const settingsPath = path.join(homedir(), '.claude-mem', 'settings.json');
     const settings = SettingsDefaultsManager.loadFromFile(settingsPath);
-    return settings.CLAUDE_MEM_MODEL;
+    const configuredModel = settings.CLAUDE_MEM_MODEL;
+
+    // Map standard model names to custom model names if configured
+    const modelMapping: Record<string, string> = {
+      // Haiku models
+      'claude-haiku-4-20250514': settings.CLAUDE_MEM_DEFAULT_HAIKU_MODEL,
+      'claude-haiku-4-20250731': settings.CLAUDE_MEM_DEFAULT_HAIKU_MODEL,
+      // Sonnet models
+      'claude-sonnet-4-5': settings.CLAUDE_MEM_DEFAULT_SONNET_MODEL,
+      'claude-sonnet-4-20250514': settings.CLAUDE_MEM_DEFAULT_SONNET_MODEL,
+      'claude-sonnet-4-20250731': settings.CLAUDE_MEM_DEFAULT_SONNET_MODEL,
+      // Opus models
+      'claude-opus-4-20250514': settings.CLAUDE_MEM_DEFAULT_OPUS_MODEL,
+      'claude-opus-4-20250731': settings.CLAUDE_MEM_DEFAULT_OPUS_MODEL,
+    };
+
+    // Return custom model if configured, otherwise use the configured model as-is
+    return modelMapping[configuredModel] || configuredModel;
   }
 }

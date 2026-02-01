@@ -29,6 +29,13 @@ export interface SettingsDefaults {
   CLAUDE_MEM_OPENROUTER_APP_NAME: string;
   CLAUDE_MEM_OPENROUTER_MAX_CONTEXT_MESSAGES: string;
   CLAUDE_MEM_OPENROUTER_MAX_TOKENS: string;
+  // Custom Anthropic API Configuration
+  CLAUDE_MEM_AUTH_TOKEN: string;
+  CLAUDE_MEM_BASE_URL: string;
+  CLAUDE_MEM_DEFAULT_HAIKU_MODEL: string;
+  CLAUDE_MEM_DEFAULT_SONNET_MODEL: string;
+  CLAUDE_MEM_DEFAULT_OPUS_MODEL: string;
+  CLAUDE_MEM_API_TIMEOUT_MS: string;
   // System Configuration
   CLAUDE_MEM_DATA_DIR: string;
   CLAUDE_MEM_LOG_LEVEL: string;
@@ -73,6 +80,13 @@ export class SettingsDefaultsManager {
     CLAUDE_MEM_OPENROUTER_APP_NAME: 'claude-mem',  // App name for OpenRouter analytics
     CLAUDE_MEM_OPENROUTER_MAX_CONTEXT_MESSAGES: '20',  // Max messages in context window
     CLAUDE_MEM_OPENROUTER_MAX_TOKENS: '100000',  // Max estimated tokens (~100k safety limit)
+    // Custom Anthropic API Configuration
+    CLAUDE_MEM_AUTH_TOKEN: '',  // Custom auth token (overrides ANTHROPIC_API_KEY)
+    CLAUDE_MEM_BASE_URL: '',  // Custom base URL (overrides default Anthropic API)
+    CLAUDE_MEM_DEFAULT_HAIKU_MODEL: '',  // Custom Haiku model name (empty = use default)
+    CLAUDE_MEM_DEFAULT_SONNET_MODEL: '',  // Custom Sonnet model name (empty = use default)
+    CLAUDE_MEM_DEFAULT_OPUS_MODEL: '',  // Custom Opus model name (empty = use default)
+    CLAUDE_MEM_API_TIMEOUT_MS: '',  // Custom API timeout in milliseconds (empty = use SDK default)
     // System Configuration
     CLAUDE_MEM_DATA_DIR: join(homedir(), '.claude-mem'),
     CLAUDE_MEM_LOG_LEVEL: 'INFO',
